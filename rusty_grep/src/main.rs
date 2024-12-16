@@ -1,3 +1,5 @@
+use std::fs;
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
@@ -8,7 +10,8 @@ fn main() {
     let query = &args[1];
     let file_specified = &args[2];
 
-    dbg!(&query, &file_specified);
+    let content =
+        fs::read_to_string(file_specified).expect("should have been able to read the file!");
 
-    !todo!("read from file...")
+    println!("with text:\n {content}");
 }
