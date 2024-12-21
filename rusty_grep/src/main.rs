@@ -1,36 +1,29 @@
-use std::{fs, os::unix::process};
+/**
+* Author : @grainme
+* Config : query + file_path
+* !query should be the word we're looking for.
+* !file_path should be the file we're querying.
+*
+* ----------------------------------------
+*
+* Implementation details:
+* Config is a struct, impl build method for Config.
+* std::env::args , fs::read_to_string(file_path)
+*/
+use {rusty_grep::run, rusty_grep::Config, std::process};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
-    let config = Config::build(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {err}");
+    // unwrap_or_else calls the code in closur (TBS chp 13)
+    let config: Config = Config::build(&args).unwrap_or_else(|err| {
+        println!("Problems parsing arguments :  {}", err);
         process::exit(1);
     });
 
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.file_path);
-
-    let content =
-        fs::read_to_string(config.file_path).expect("should have been able to read the file!");
-
-    println!("with text:\n {content}");
-}
-
-struct Config {
-    query: String,
-    file_path: String,
-}
-
-impl Config {
-    fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-
-        Ok(Config {
-            query: args[1].clone(),
-            file_path: args[2].clone(),
-        })
+    // if let instead of unwrap_or_else because run doesn't return an OK :)
+    if let Err(e) = run(config) {
+        println!("Application error : {}", e);
+        process::exit(1);
     }
 }
