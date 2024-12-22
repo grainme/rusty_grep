@@ -17,13 +17,13 @@ fn main() {
 
     // unwrap_or_else calls the code in closur (TBS chp 13)
     let config: Config = Config::build(&args).unwrap_or_else(|err| {
-        println!("Problems parsing arguments :  {}", err);
+        eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
 
     // if let instead of unwrap_or_else because run doesn't return an OK :)
     if let Err(e) = run(config) {
-        println!("Application error : {}", e);
+        eprintln!("Application error: {e}");
         process::exit(1);
     }
 }
